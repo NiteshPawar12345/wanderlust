@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Listing = require("../models/listing"); // Mongoose model import
+const Listing = require("../models/listing"); 
 const {isLoggedIn} = require("./middleware.js");
 
 
@@ -10,7 +10,7 @@ router.get("/", async (req, res, next) => {
     try {
         let allListings = await Listing.find({});
 
-        // Agar kisi listing me image missing ho to default set karo
+        
         allListings = allListings.map(listing => {
             if (!listing.image) {
                 listing.image = { url: "/images/default.jpg" };
@@ -35,7 +35,7 @@ router.post("/", async (req, res, next) => {
     try {
         let { title, description, price, location, country, image } = req.body.listing;
 
-        // Agar image nahi di ho to default set karo
+        
         if (!image || !image.url) {
             image = { url: "/images/default.jpg" };
         }

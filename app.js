@@ -8,7 +8,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 
-const Listing = require("./models/listing"); // Mongoose model import
+const Listing = require("./models/listing"); 
 
 const listings = require("./routes/listings.js");
 const reviews = require("./routes/review.js");
@@ -26,7 +26,7 @@ const User = require("./models/user.js");
 
 const app = express();
 const PORT = 8080;
-// const MONGO_URL = "mongodb://127.0.0.1:27017/WanderlustDB";
+
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -60,7 +60,7 @@ store.on("error", () => {
 
 const sessionOption = {
     store,
-    secret: process.env.SECRET,
+    secret: process.env.SECRET || "sessionsecret",
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -71,10 +71,7 @@ const sessionOption = {
 }
 
 
-// Root Route
-// app.get("/", (req, res) => {
-//     res.redirect("/listings");
-// });
+
 
 app.use(session(sessionOption));
 app.use(flash());
@@ -86,26 +83,38 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
-     res.locals.currentUser = req.user;
+    console.log("🔍 Middleware running - Setting currentUser");
+    console.log("req.user:", req.user);
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
-    
-    
-    next();
-})
 
-app.get("/demouser", async(req, res) => {
-    let fakeUser = new User({
-        email: "Student@gmail.com",
-        username: "delta-studen",
-    });
-    let registerduser = await User.register(fakeUser, "helloworld");
-    res.send(registerduser);
+    next();
 });
+
+app.get('/', async (req, res) => {
+  try {
+    const allListings = await Listing.find({});
+    
+    res.render('listings/index', { allListings });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// app.get("/demouser", async(req, res) => {
+//     let fakeUser = new User({
+//         email: "Student@gmail.com",
+//         username: "delta-studen",
+//     });
+//     let registerduser = await User.register(fakeUser, "helloworld");
+//     res.send(registerduser);
+// });
   
     
 app.get("/listings/search", async (req, res, next) => {
-    let { country } = req.query; // query se country aayegi
+    let { country } = req.query; 
     console.log("Search Country:", country);
 
     try {
@@ -126,23 +135,14 @@ if (country) {
     }
 });
 
-// app.get("/listings/trending", async(req, res) => {
-//     let allListings;
-//     if(price = 4000) {
-//         allListings = await Listing.find({price: price});
-//     }else {
-//     allListings = await Listing.find({});
-    
-// }
 
-// })
 
 app.get("/listings/trending", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 4000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -154,10 +154,10 @@ app.get("/listings/trending", async (req, res, next) => {
 
 app.get("/listings/rooms", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 6000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -169,10 +169,10 @@ app.get("/listings/rooms", async (req, res, next) => {
 
 app.get("/listings/iconic", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 10000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -184,10 +184,10 @@ app.get("/listings/iconic", async (req, res, next) => {
 
 app.get("/listings/mountains", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 8000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+       
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -198,10 +198,10 @@ app.get("/listings/mountains", async (req, res, next) => {
 
 app.get("/listings/castles", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 5000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -211,10 +211,10 @@ app.get("/listings/castles", async (req, res, next) => {
 });
 app.get("/listings/pool", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 4000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -225,10 +225,10 @@ app.get("/listings/pool", async (req, res, next) => {
 
 app.get("/listings/camping", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+        
         const fixedPrice = 3000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -238,10 +238,10 @@ app.get("/listings/camping", async (req, res, next) => {
 });
 app.get("/listings/farms", async (req, res, next) => {
     try {
-        // yaha fixed price set kar diya
+       
         const fixedPrice = 4000;
 
-        // sirf wahi listings aayengi jinki price = 4000 hai
+        
         let allListings = await Listing.find({ price: fixedPrice });
 
         res.render("listings/index", { allListings });
@@ -259,50 +259,19 @@ app.get("/listings/farms", async (req, res, next) => {
 
 
 
-
-// const validateReview = (req, res, next) => {
-//      let error = reviewSchema.validate(req.body);
-    
-//     if(error) {
-//         throw new ExpressError(400, error);
-//     } else {
-//         next();
-//     }
-// }
-
-
 app.use("/listings", listings);
 
 app.use("/listings/:id/reviews", reviews);
 app.use("/", userRouter);
 
-// ERROR HANDLING
 
-
-// Page not found
-// app.all("*", (req, res, next) => {
-//     next(new ExpressError(404, "Page Not Found!"));
-// });
 
 // Centralized error handler
 app.use((err, req, res, next) => {
     const { statusCode = 500, message = "Something went wrong" } = err;
-    // res.status(statusCode).send(message);
+    
     res.status(statusCode).render("listings/error.ejs" , {message});
 });
-
-
-app.get('/', async (req, res) => {
-  try {
-    const allListings = await Listing.find({});
-    
-    res.render('listings/index', { allListings });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
 
 
 

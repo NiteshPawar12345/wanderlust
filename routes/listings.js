@@ -18,10 +18,10 @@ const upload = multer({ storage });
 
 
 const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body); // sirf error destructure karo
+    const { error } = reviewSchema.validate(req.body); 
     
     if (error) {
-        const msg = error.details.map(el => el.message).join(','); // readable error msg
+        const msg = error.details.map(el => el.message).join(','); 
         throw new ExpressError(400, msg);
     } else {
         next();
