@@ -10,7 +10,11 @@ import ListingEdit from './pages/ListingEdit';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || (
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? ''
+    : 'https://wanderlust-1-k4rh.onrender.com'
+);
 axios.defaults.withCredentials = true;
 
 function App() {
