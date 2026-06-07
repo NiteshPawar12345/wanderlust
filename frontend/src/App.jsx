@@ -10,6 +10,7 @@ import ListingEdit from './pages/ListingEdit';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
 axios.defaults.withCredentials = true;
 
 function App() {
