@@ -38,7 +38,7 @@ main().catch((err) => console.error("❌ DB Connection Error:", err));
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     crypto: {
-        secret: process.env.SECRET || "sessionsecret",
+        secret: process.env.SECRET || "wanderlustSessionSecretKeyHighEntropyFallback2026!",
     },
     touchAfter: 24 * 3600,
 });
@@ -48,7 +48,7 @@ store.on("error", (err) => {
 
 const sessionOption = {
     store,
-    secret: process.env.SECRET || "sessionsecret",
+    secret: process.env.SECRET || "wanderlustSessionSecretKeyHighEntropyFallback2026!",
     resave: false,
     saveUninitialized: true,
     cookie: {
