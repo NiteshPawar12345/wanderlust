@@ -37,10 +37,33 @@ async function main() {
 }
 main().catch((err) => console.error("❌ DB Connection Error:", err));
 
+// Helper to validate session secret complexity requirements for kruptein/connect-mongo
+function isSecretComplex(str) {
+    if (!str || typeof str !== "string") return false;
+    if (str.length < 8) return false;
+    const uppers = str.match(/[A-Z]/g);
+    if (!uppers || uppers.length < 2) return false;
+    const lowers = str.match(/[a-z]/g);
+    if (!lowers || lowers.length < 2) return false;
+    const numbers = str.match(/[0-9]/g);
+    if (!numbers || numbers.length < 2) return false;
+    const specials = str.match(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g);
+    if (!specials || specials.length < 2) return false;
+    return true;
+}
+
+let sessionSecret = process.env.SECRET;
+const defaultFallbackSecret = "WanderlustSessionSecretKeyHighEntropy2026!!";
+
+if (!isSecretComplex(sessionSecret)) {
+    console.warn("⚠️  WARNING: The configured process.env.SECRET is missing or does not meet complexity requirements (requires at least 8 chars, 2 uppercase, 2 lowercase, 2 numbers, and 2 special characters). Falling back to a secure default key.");
+    sessionSecret = defaultFallbackSecret;
+}
+
 const store = MongoStore.create({
     mongoUrl: dbUrl,
     crypto: {
-        secret: process.env.SECRET || "wanderlustSessionSecretKeyHighEntropyFallback2026!",
+        secret: sessionSecret,
     },
     touchAfter: 24 * 3600,
 });
@@ -50,7 +73,7 @@ store.on("error", (err) => {
 
 const sessionOption = {
     store,
-    secret: process.env.SECRET || "wanderlustSessionSecretKeyHighEntropyFallback2026!",
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: {
