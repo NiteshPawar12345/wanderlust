@@ -26,6 +26,8 @@ const User = require("./models/user.js");
 const app = express();
 const PORT = 8080;
 
+app.set("trust proxy", 1);
+
 const dbUrl = process.env.ATLASDB_URL;
 
 // DATABASE CONNECTION
@@ -55,8 +57,8 @@ const sessionOption = {
         expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        // Since we use proxy in development, frontend and backend share same origin.
-        // Thus, we don't need complex sameSite or secure settings locally.
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     }
 };
 

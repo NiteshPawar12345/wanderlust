@@ -8,9 +8,14 @@ module.exports.signup = async (req, res, next) => {
        
         req.login(registeredUser, (err) => {
             if (err) return next(err);
+            // Use registeredUser details directly to prevent crash if req.user is temporarily undefined
             res.status(201).json({ 
                 success: true, 
-                user: { _id: req.user._id, username: req.user.username, email: req.user.email } 
+                user: { 
+                    _id: registeredUser._id, 
+                    username: registeredUser.username, 
+                    email: registeredUser.email 
+                } 
             });
         });
     } catch (e) {
@@ -19,10 +24,14 @@ module.exports.signup = async (req, res, next) => {
 };
 
 module.exports.login = async (req, res) => {
+    const user = req.user;
+    if (!user) {
+        return res.status(401).json({ error: "Session could not be established. Please try logging in again." });
+    }
     res.json({ 
         success: true, 
         message: "Welcome back!", 
-        user: { _id: req.user._id, username: req.user.username, email: req.user.email } 
+        user: { _id: user._id, username: user.username, email: user.email } 
     });
 };
 
