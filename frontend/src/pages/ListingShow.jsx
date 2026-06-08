@@ -327,7 +327,7 @@ function ListingShow({ user, showNotification, darkMode }) {
               </h2>
             </div>
 
-            {listing.reviews && listing.reviews.length > 0 ? (
+            {(listing.reviews?.length || 0) > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {listing.reviews.map((rev) => {
                   const isReviewAuthor = user && rev.author && user._id === rev.author._id;

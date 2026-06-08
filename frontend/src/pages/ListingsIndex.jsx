@@ -151,7 +151,7 @@ function ListingsIndex() {
             Try again
           </button>
         </div>
-      ) : listings.length === 0 ? (
+      ) : (listings?.length || 0) === 0 ? (
         <div className="text-center py-20 bg-slate-50 dark:bg-slate-900/40 rounded-[32px] border border-dashed border-slate-200 dark:border-slate-800 max-w-2xl mx-auto px-6">
           <SearchCode className="w-14 h-14 text-slate-400 dark:text-slate-600 mx-auto mb-4 stroke-[1.5]" />
           <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">No Stays Found</h3>
@@ -171,7 +171,7 @@ function ListingsIndex() {
       ) : (
         /* Listings Grid - Enlarged 3-Column Premium Card Layout */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-          {listings.map((listing) => {
+          {(listings || []).map((listing) => {
             const finalPrice = showTax ? listing.price * 1.18 : listing.price;
             return (
               <Link 
